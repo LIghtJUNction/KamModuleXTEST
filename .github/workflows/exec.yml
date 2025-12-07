@@ -1,9 +1,9 @@
-name: Manual Kam Build
+name: Kam Exec
 on:
   workflow_dispatch:
     inputs:
       build-command:
-        description: "Full kam build command"
+        description: "exec something"
         required: false
         type: string
         default: "kam build -r"
