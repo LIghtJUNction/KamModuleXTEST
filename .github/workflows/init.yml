@@ -1,0 +1,44 @@
+name: Kam Project Initialization
+on:
+  workflow_dispatch:
+    inputs:
+      template-url:
+        description: "Template download URL (single template: .tar.gz; multiple templates: .zip) - leave empty to skip template download"
+        required: false
+        type: string
+        default: "https://github.com/MemDeco-WG/Kam/releases/latest/download/templates.zip"
+        
+      init-command:
+        description: "Full initialization command (complete command to run after setup/template download)"
+        required: false
+        type: string
+        default: "kam init . --kam"
+
+jobs:
+  run-initialization:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup kam (v1.1)
+        uses: MemDeco-WG/setup-kam@v1.1
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Download and import
+        shell: bash
+        run: |
+          TEMPLATE_FILENAME=$(basename "${{ github.event.inputs.template-url }}")
+          echo "Downloading template: $TEMPLATE_FILENAME from ${{ github.event.inputs.template-url }}"
+          curl -fsSL -o "$TEMPLATE_FILENAME" "${{ github.event.inputs.template-url }}"
+          echo "Template downloaded successfully: $(ls -la "$TEMPLATE_FILENAME")"
+          kam tmpl import $TEMPLATE_FILENAME
+
+          
+      - name: Execute full initialization command
+        shell: bash
+        run: |
+          echo "Running initialization command: ${{ github.event.inputs.init-command }}"
+          ${{ github.event.inputs.init-command }}
+          echo "Initialization completed successfully"
