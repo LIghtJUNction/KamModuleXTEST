@@ -1,0 +1,29 @@
+name: Manual Kam Build
+on:
+  workflow_dispatch:
+    inputs:
+      build-command:
+        description: "Full kam build command"
+        required: false
+        type: string
+        default: "kam build -r"
+
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup kam (v1.1)
+        uses: MemDeco-WG/setup-kam@v1.1
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Run kam build command
+        shell: bash
+        run: |
+          echo "Executing build command: ${{ github.event.inputs.build-command }}"
+          ${{ github.event.inputs.build-command }}
+          echo "Build completed successfully"
