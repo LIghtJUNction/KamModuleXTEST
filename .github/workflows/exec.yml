@@ -27,6 +27,7 @@ jobs:
       - name: Run kam command
         shell: bash
         run: |
+          chmod +x hooks/**/*
           echo "Executing: ${{ github.event.inputs.build-command }}"
           ${{ github.event.inputs.build-command }}
         env:
