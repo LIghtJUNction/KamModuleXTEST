@@ -53,8 +53,8 @@ How to set `template-url` and `init-command`:
   - Can point to a compressed archive (zip/tgz) such as `https://example.com/template.zip` or a release asset, or a local unzipped directory path like `./template-folder`.
   - If providing a URL, please keep the filename and extension (e.g. `.zip` / `.tgz`). `kam tmpl import` may reject files without recognizable extensions.
 - `init-command`:
-  - Provide the full command string to be executed by the Action. The default is `kam init . -t kam -f`.
-  - The `-t/--template` option accepts a short built-in template id (e.g., `kam`, `meta`, `ak3`) and will be resolved to `<id>_template` (e.g., `kam` -> `kam_template`). You can also provide a full template id (e.g., `kam_template`) or a local path/archive URL (e.g., `./template-folder` or `https://.../template.zip`). Use `--tmpl` to create a template project. You can still use `kam init .` or add additional flags as needed.
+  - Provide the full command string to be executed by the Action. The default is `kam init . -t kam_template -f`.
+
 
 setup-kam Action inputs (summary)
 ---
