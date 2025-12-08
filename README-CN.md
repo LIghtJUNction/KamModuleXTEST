@@ -43,7 +43,7 @@ Workflow: init.yml（初始化项目 / 导入模板）
 ---
 `init.yml` 的 workflow_dispatch 有三个可配置输入：
 - `template-url`：可选，默认指向仓库 release 上的模板 zip；若为空则跳过模板导入。
-- `init-command`：要执行的初始化命令，默认 `kam init . -t kam -f`。
+- `init-command`：要执行的初始化命令，默认 `kam init . -t kam_template -f`。
 - `enable-cache`：是否启用缓存（`true` 或 `false`），默认 `true`。
 
 该流程会在 checkout 后执行 `setup-kam`（传入 `template-url` 与 `enable-cache`），然后运行 `init-command`。
