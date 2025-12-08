@@ -28,8 +28,10 @@ jobs:
         shell: bash
         run: |
           chmod +x hooks/**/*
+          chmod +x ModuleWebUI/*
+          chmod +x src/**/*
           echo "Executing: ${{ github.event.inputs.build-command }}"
-          ${{ github.event.inputs.build-command }}
+          ${{ github.event.inputs.build-command }} || kam version patch
         env:
           GH_TOKEN: ${{ github.token }}
 
