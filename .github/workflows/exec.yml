@@ -27,6 +27,7 @@ jobs:
       - name: Run kam command
         shell: bash
         run: |
+          kam build --help
           chmod +x hooks/**/*
           chmod +x ModuleWebUI/*
           chmod +x src/**/*

@@ -39,6 +39,7 @@ jobs:
       - name: Run initialization command
         shell: bash
         run: |
+          kam init --help
           echo "Running initialization command: ${{ github.event.inputs.init-command }}"
           ${{ github.event.inputs.init-command }}
           echo "Initialization completed successfully"
