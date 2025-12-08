@@ -14,10 +14,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@latest
 
       - name: Setup kam (v1.1)
-        uses: MemDeco-WG/setup-kam@v1.1
+        uses: MemDeco-WG/setup-kam@latest
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
@@ -29,7 +29,7 @@ jobs:
           echo "Build completed successfully"
        
       - name: Auto-commit changes
-        uses: stefanzweifel/git-auto-commit-action@v7
+        uses: stefanzweifel/git-auto-commit-action@latest
         with:
            commit_message: >
              chore: apply config 
