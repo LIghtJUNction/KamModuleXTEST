@@ -48,6 +48,27 @@ jobs:
             TOKEN=$(echo "$TOKEN_JSON" | jq -r '.value')
             echo "SIGSTORE_ID_TOKEN=$TOKEN" >> $GITHUB_ENV
           fi
+      - name: Write signing key to file (optional)
+        if: ${{ secrets.KAM_SIGN_KEY != '' }}
+        run: |
+          mkdir -p /tmp/kam
+          set -euo pipefail
+          # Try to decode from base64; fallback to raw PEM if decode fails
+          if echo "${{ secrets.KAM_SIGN_KEY }}" | base64 --decode >/tmp/kam/kam_sign_key.pem 2>/dev/null; then
+            echo "Decoded KAM_SIGN_KEY (base64) -> /tmp/kam/kam_sign_key.pem"
+          else
+            echo "${{ secrets.KAM_SIGN_KEY }}" > /tmp/kam/kam_sign_key.pem
+          fi
+          chmod 600 /tmp/kam/kam_sign_key.pem
+          # Expose env variables for subsequent steps
+          echo "KAM_SIGN_KEY_PATH=/tmp/kam/kam_sign_key.pem" >> $GITHUB_ENV
+          echo "KAM_SIGN_ALLOW_CI=1" >> $GITHUB_ENV
+          echo "KAM_SIGN_ENABLED=1" >> $GITHUB_ENV
+      - name: Export KAM_SIGN_PASSPHRASE (optional)
+        if: ${{ secrets.KAM_SIGN_PASSPHRASE != '' }}
+        run: |
+          # Keep this as an env var for subsequent steps (safe via GitHub secrets)
+          echo "KAM_SIGN_PASSPHRASE=${{ secrets.KAM_SIGN_PASSPHRASE }}" >> $GITHUB_ENV
       - name: Verify kam installation
         run: kam --version
       - name: Run initialization command

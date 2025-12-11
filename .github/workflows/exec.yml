@@ -36,6 +36,25 @@ jobs:
           TOKEN_JSON=$(curl -s -X POST "$ACTIONS_ID_TOKEN_REQUEST_URL" -H "Authorization: Bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN")
           TOKEN_VALUE=$(echo "$TOKEN_JSON" | jq -r .value)
           echo "SIGSTORE_ID_TOKEN=$TOKEN_VALUE" >> $GITHUB_ENV
+      - name: Write signing key to file (optional)
+        if: ${{ secrets.KAM_SIGN_KEY != '' }}
+        run: |
+          mkdir -p /tmp/kam
+          set -euo pipefail
+          # Try to decode as base64; if that fails, treat as a raw PEM
+          if echo "${{ secrets.KAM_SIGN_KEY }}" | base64 --decode >/tmp/kam/kam_key.pem 2>/dev/null; then
+            echo "Decoded KAM_SIGN_KEY (base64) -> /tmp/kam/kam_key.pem"
+          else
+            echo "${{ secrets.KAM_SIGN_KEY }}" > /tmp/kam/kam_key.pem
+          fi
+          chmod 600 /tmp/kam/kam_key.pem
+          echo "KAM_SIGN_KEY_PATH=/tmp/kam/kam_key.pem" >> $GITHUB_ENV
+
+      - name: Export KAM_SIGN_PASSPHRASE (optional)
+        if: ${{ secrets.KAM_SIGN_PASSPHRASE != '' }}
+        run: |
+          echo "KAM_SIGN_PASSPHRASE=${{ secrets.KAM_SIGN_PASSPHRASE }}" >> $GITHUB_ENV
+
       - name: Verify kam installation
         run: kam --version
       - name: Run kam command
@@ -48,6 +67,10 @@ jobs:
           ${{ github.event.inputs.kam-command }}
         env:
           GH_TOKEN: ${{ github.token }}
+          # Allow headless/non-interactive signing using secrets/configured KAM_SIGN_KEY_PATH
+          KAM_SIGN_ALLOW_NONINTERACTIVE: 1
+          # Ensure hooks that rely on KAM_SIGN_ENABLED see it enabled; it's ok to override here
+          KAM_SIGN_ENABLED: 1
       - name: Auto-commit changes
         uses: stefanzweifel/git-auto-commit-action@v7
         with:
